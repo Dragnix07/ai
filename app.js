@@ -6,6 +6,8 @@ const fs = require("fs");
 const fsPromises = fs.promises;
 const path = require("path");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const i18next = require('i18next');
+const Backend = require('i18next-fs-backend');
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -17,9 +19,15 @@ app.use(express.json({ limit: "50mb" }));
 const upload = multer({ dest: "upload/" });
 app.use(express.json({ limit: "10mb" }));
 
-//initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-app.use(express.static("public"));
+// Initialize i18next
+i18next
+  .use(Backend)
+  .init({
+    fallbackLng: 'en',
+    backend: {
+      loadPath: path.join(__dirname, 'locales', '{{lng}}.json')
+    }
+  });
 
 //routes
 //analyze
@@ -34,10 +42,13 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
       encoding: "base64",
     });
 
+    const language = req.body.language || 'en';
+    i18next.changeLanguage(language);
+
     // Use the Gemini model to analyze the image
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
     const result = await model.generateContent([
-      "Analyze this plant image and provide its indian name with a detailed analysis of its species , health, and care recommendations, its characteristics, care instructions, and any interesting facts. Please provide the response in plain text without using any markdown formatting.",
+      i18next.t('analyzePrompt', { lng: language }),
       {
         inlineData: {
           mimeType: req.file.mimetype,
@@ -55,18 +66,17 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
     res.json({
       result: plantInfo,
       image: `data:${req.file.mimetype};base64,${imageData}`,
+      language: language
     });
   } catch (error) {
     console.error("Error analyzing image:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while analyzing the image" });
+    res.status(500).json({ error: "An error occurred while analyzing the image", details: error.message });
   }
 });
 
 //download pdf
 app.post("/download", express.json(), async (req, res) => {
-  const { result, image } = req.body;
+  const { result, image, language } = req.body;
   try {
     //Ensure the reports directory exists
     const reportsDir = path.join(__dirname, "reports");
@@ -77,14 +87,18 @@ app.post("/download", express.json(), async (req, res) => {
     const writeStream = fs.createWriteStream(filePath);
     const doc = new PDFDocument();
     doc.pipe(writeStream);
+
+    i18next.changeLanguage(language);
+
     // Add content to the PDF
-    doc.fontSize(24).text("Plant Analysis Report", {
+    doc.fontSize(24).text(i18next.t('reportTitle', { lng: language }), {
       align: "center",
     });
     doc.moveDown();
-    doc.fontSize(24).text(`Date: ${new Date().toLocaleDateString()}`);
+    doc.fontSize(24).text(i18next.t('dateLabel', { lng: language }) + `: ${new Date().toLocaleDateString(language)}`);
     doc.moveDown();
     doc.fontSize(14).text(result, { align: "left" });
+
     //insert image to the pdf
     if (image) {
       const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
@@ -97,6 +111,7 @@ app.post("/download", express.json(), async (req, res) => {
       });
     }
     doc.end();
+
     //wait for the pdf to be created
     await new Promise((resolve, reject) => {
       writeStream.on("finish", resolve);
@@ -104,18 +119,21 @@ app.post("/download", express.json(), async (req, res) => {
     });
     res.download(filePath, (err) => {
       if (err) {
-        res.status(500).json({ error: "Error downloading the PDF report" });
+        console.error("Error downloading PDF:", err);
+        res.status(500).json({ error: "Error downloading the PDF report", details: err.message });
       }
-      fsPromises.unlink(filePath);
+      fsPromises.unlink(filePath).catch(err => console.error("Error deleting PDF file:", err));
     });
   } catch (error) {
     console.error("Error generating PDF report:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while generating the PDF report" });
+    res.status(500).json({ error: "An error occurred while generating the PDF report", details: error.message });
   }
 });
 //start the server
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
