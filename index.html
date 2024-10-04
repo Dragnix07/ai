@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlantScan: Advanced Plant Analysis Tool</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">
+          <i class="fas fa-leaf"></i> PlantScan
+        </div>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#upload">Analyze</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="hero-content">
+          <h1>PlantScan: Advanced Plant Analysis Tool</h1>
+          <p>Upload an image of a plant to receive a detailed analysis of its species, health, and care recommendations.</p>
+          <a href="#upload" class="cta-button">Analyze Your Plant</a>
+        </div>
+      </section>
+
+      <section id="features" class="features">
+        <h2>Features</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <i class="fas fa-seedling"></i>
+            <h3>Species Identification</h3>
+            <p>Accurate plant species identification using advanced AI technology.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-heartbeat"></i>
+            <h3>Health Assessment</h3>
+            <p>Detailed plant health assessment to identify potential issues.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-list-ul"></i>
+            <h3>Care Recommendations</h3>
+            <p>Customized care recommendations tailored to your plant's needs.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-file-pdf"></i>
+            <h3>PDF Reports</h3>
+            <p>Downloadable PDF reports with comprehensive analysis results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Upload</h3>
+            <p>Take a clear photo of your plant or upload an existing image.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Analyze</h3>
+            <p>Our AI processes the image and generates a detailed analysis.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Results</h3>
+            <p>Receive instant results with species info and care tips.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Download</h3>
+            <p>Get a comprehensive PDF report for future reference.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="upload" class="upload-section">
+        <h2>Analyze Your Plant</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div class="upload-area" id="dropArea">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <p class="upload-text">Drag & Drop or Click to Upload Plant Image</p>
+            <input type="file" name="image" accept="image/*" required id="imageInput" />
+            <img id="imagePreview" alt="Image preview" />
+          </div>
+          <button type="submit" class="analyze-button">
+            <i class="fas fa-search"></i> Analyze Plant
+          </button>
+        </form>
+
+        <div id="loading" class="loading">
+          <i class="fas fa-spinner fa-spin"></i> Analyzing plant image...
+        </div>
+        <div id="result" class="result"></div>
+        <button id="downloadButton" class="download-button">
+          <i class="fas fa-file-pdf"></i> Download PDF Report
+        </button>
+      </section>
+
+      <section class="testimonials">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <p>"PlantScan helped me identify and care for my mystery plant. Highly recommended!"</p>
+            <p class="testimonial-author">- Sarah J.</p>
+          </div>
+          <div class="testimonial-card">
+            <p>"The detailed care instructions are a game-changer. My plants have never looked better!"</p>
+            <p class="testimonial-author">- Mike T.</p>
+          </div>
+          <div class="testimonial-card">
+            <p>"As a beginner gardener, this tool has been invaluable. It's like having an expert on call!"</p>
+            <p class="testimonial-author">- Emily R.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>PlantScan</h3>
+          <p>Advanced plant analysis tool powered by AI.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#upload">Analyze</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@plantscan.com</p>
+          <p>Phone: (123) 456-7890</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2023 PlantScan. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
